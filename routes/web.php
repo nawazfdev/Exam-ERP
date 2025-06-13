@@ -100,21 +100,7 @@ Route::get('/logout', function () {
     return redirect('/');
 })->name('logout');
 
-// For Candidates Routes
-Route::prefix('candidates')->middleware('auth')->group(function () {
-
-    Route::get('upcoming-exams', [UpcomingExamController::class, 'index'])->name('candidates.upcoming-exams.index');
-    Route::get('exam/{exam}/instructions', [CandidateExamController::class, 'instructions'])->name('candidates.exam.instructions');
-    // Route for starting an exam
-    Route::get('exam/{exam}/start', [CandidateExamController::class, 'start'])->name('candidates.exam.start');
-    Route::post('exam/{exam}/storeAnswer', [CandidateExamController::class, 'storeAnswer'])->name('candidates.exam.storeAnswer');
-    Route::post('exam/{exam}/submit', [CandidateExamController::class, 'submitExam'])->name('candidates.exam.submit');
-    
-
-
-
-
-});
+ 
 
 // Admin Routes
 Route::middleware('auth')->prefix('admin')->group(function () {
@@ -168,3 +154,32 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 });
 
 
+// // Organization Admin Routes
+// Route::prefix('organization')->middleware(['auth', 'role:organization-admin'])->name('organization.')->group(function () {
+//     Route::get('/dashboard', [OrganizationAdminController::class, 'dashboard'])->name('dashboard');
+    
+//     // Candidate Management (Organization Admin only)
+//     Route::resource('candidates', CandidateController::class);
+//     Route::resource('candidate-groups', CandidateGroupController::class);
+    
+//     // Exam Management (Organization Admin only)
+//     Route::resource('exams', ExamController::class);
+//     Route::resource('questions', QuestionController::class);
+//     Route::resource('question-categories', QuestionCategoryController::class);
+    
+//     // Results and Reports (Organization-scoped)
+//     Route::get('/results', [OrganizationAdminController::class, 'results'])->name('results');
+//     Route::get('/reports', [OrganizationAdminController::class, 'reports'])->name('reports');
+// });
+
+ 
+
+// Protected Candidate Routes
+// Route::prefix('candidates')->middleware('candidate.auth')->name('candidates.')->group(function () {
+//     Route::get('/dashboard', [CandidateController::class, 'dashboard'])->name('dashboard');
+//     Route::get('/upcoming-exams', [CandidateExamController::class, 'upcomingExams'])->name('upcoming-exams');
+//     Route::get('/exam/{exam}/start', [CandidateExamController::class, 'start'])->name('exam.start');
+//     Route::post('/exam/{exam}/submit', [CandidateExamController::class, 'submit'])->name('exam.submit');
+//     Route::get('/results', [CandidateController::class, 'results'])->name('results');
+//     Route::get('/profile', [CandidateController::class, 'profile'])->name('profile');
+// });

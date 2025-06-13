@@ -8,75 +8,119 @@ use Spatie\Permission\Models\Role;
 
 class PermissionsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Use updateOrCreate to avoid duplicate roles
-        $role = Role::updateOrCreate(
-            ['name' => 'superadmin', 'guard_name' => 'web']
-        );
+        // Create Roles
+        $superAdminRole = Role::updateOrCreate(['name' => 'superadmin', 'guard_name' => 'web']);
+        $adminRole = Role::updateOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $organizationAdminRole = Role::updateOrCreate(['name' => 'organization-admin', 'guard_name' => 'web']);
+        $candidateRole = Role::updateOrCreate(['name' => 'candidate', 'guard_name' => 'candidate']);
 
-        $modules = [
+        // SuperAdmin Modules (Full System Access)
+        $superAdminModules = [
             'Dashboard',
-            'SiteSettings',
-            'HomeSections',
-            'Sliders',
-            'Products',
-            'ProcessTechnologies',
-            'Investors',
-            'IndustryCategories',
-            'AboutUs',
-            'Industries',
-            'Pages',
-            'Categories',
-            'BlogCategories',
-            'BlogPosts',
-            'Stories',
-            'Testimonials',
+            'SiteSettings', 
+            'Organizations',
             'Users',
             'Roles',
+            'SystemSettings',
+            'Reports',
+            'Candidates',
+            'CandidateGroups',
+            'Exams',
+            'Questions',
+            'QuestionCategories',
+            'Results',
+            'ExamAttempts',
         ];
 
-        foreach ($modules as $module) {
-            $moduleName = $module;
+        // System Admin Modules (System-wide but limited)
+        $adminModules = [
+            'Dashboard',
+            'Users',
+            'Organizations',
+            'Reports',
+            'SystemSettings',
+            'Candidates',
+            'Exams',
+            'Results',
+        ];
 
-            // Generate permission names
-            $showPermissionName = 'show-' . strtolower(str_replace(' ', '-', $moduleName));
-            $createPermissionName = 'create-' . strtolower(str_replace(' ', '-', $moduleName));
-            $editPermissionName = 'edit-' . strtolower(str_replace(' ', '-', $moduleName));
-            $deletePermissionName = 'delete-' . strtolower(str_replace(' ', '-', $moduleName));
+        // Organization Admin Modules (Organization-Specific Access)
+        $organizationModules = [
+            'Dashboard',
+            'Candidates',
+            'CandidateGroups',
+            'Exams',
+            'Questions',
+            'QuestionCategories',
+            'Results',
+            'ExamAttempts',
+            'Profile',
+        ];
 
-            // Use updateOrCreate to avoid duplicate permissions
-            Permission::updateOrCreate([
-                'name' => $showPermissionName,
-                'group_name' => $moduleName
-            ]);
-            Permission::updateOrCreate([
-                'name' => $createPermissionName,
-                'group_name' => $moduleName
-            ]);
-            Permission::updateOrCreate([
-                'name' => $editPermissionName,
-                'group_name' => $moduleName
-            ]);
-            Permission::updateOrCreate([
-                'name' => $deletePermissionName,
-                'group_name' => $moduleName
-            ]);
+        // Candidate Modules (Limited Access)
+        $candidateModules = [
+            'Dashboard',
+            'UpcomingExams',
+            'ExamAttempts',
+            'Results',
+            'Profile',
+            'Certificates',
+        ];
 
-            // Add a specific 'update' permission for 'Bookings' (optional)
-            if ($moduleName === 'Bookings') {
-                Permission::updateOrCreate([
-                    'name' => 'update-booking-payment-status',
-                    'group_name' => $moduleName
-                ]);
-            }
+        // Create SuperAdmin Permissions
+        $superAdminPermissions = [];
+        foreach ($superAdminModules as $module) {
+            $permissions = $this->createModulePermissions($module);
+            $superAdminPermissions = array_merge($superAdminPermissions, $permissions);
         }
 
-        // Assign all permissions to the 'superadmin' role
-        $allPermissions = Permission::all();
-        $role->syncPermissions($allPermissions);
+        // Create Admin Permissions
+        $adminPermissions = [];
+        foreach ($adminModules as $module) {
+            $permissions = $this->createModulePermissions($module);
+            $adminPermissions = array_merge($adminPermissions, $permissions);
+        }
+
+        // Create Organization Admin Permissions
+        $organizationPermissions = [];
+        foreach ($organizationModules as $module) {
+            $permissions = $this->createModulePermissions($module);
+            $organizationPermissions = array_merge($organizationPermissions, $permissions);
+        }
+
+        // Create Candidate Permissions
+        $candidatePermissions = [];
+        foreach ($candidateModules as $module) {
+            $permissions = $this->createModulePermissions($module, 'candidate');
+            $candidatePermissions = array_merge($candidatePermissions, $permissions);
+        }
+
+        // Assign permissions to roles
+        $superAdminRole->syncPermissions($superAdminPermissions);
+        $adminRole->syncPermissions($adminPermissions);
+        $organizationAdminRole->syncPermissions($organizationPermissions);
+        $candidateRole->syncPermissions($candidatePermissions);
+    }
+
+    private function createModulePermissions($module, $guard = 'web')
+    {
+        $permissions = [];
+        $moduleName = strtolower(str_replace(' ', '-', $module));
+
+        $actions = ['show', 'create', 'edit', 'delete'];
+        
+        foreach ($actions as $action) {
+            $permissionName = $action . '-' . $moduleName;
+            $permission = Permission::updateOrCreate([
+                'name' => $permissionName,
+                'guard_name' => $guard,
+                'group_name' => $module
+            ]);
+            $permissions[] = $permission;
+        }
+
+        return $permissions;
     }
 }

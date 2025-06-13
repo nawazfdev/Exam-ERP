@@ -105,5 +105,24 @@ class CandidateController extends Controller
 
         return redirect()->route('Candidates.index')->with('success', 'Candidate deleted successfully.');
     }
+ public function dashboard()
+    {
+        // Get candidate's upcoming exams
+        // $upcomingExams = Exam::where('candidate_group_id', $candidate->candidate_group_id)
+        //                     ->with(['group', 'organization'])
+        //                     ->withCount('questions')
+        //                     ->get();
+        
+        // // Get candidate's exam attempts/history
+        // $examAttempts = ExamAttempt::where('candidate_id', $candidate->id)
+        //                            ->with('exam')
+        //                            ->latest()
+        //                            ->get();
+        
+        return view('candidates.dashboard');
+    }
+    public function show(){
+        return view('candidates.dashboard');
 
+    }
 }

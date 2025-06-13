@@ -16,15 +16,17 @@ return new class extends Migration {
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('username')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignId('organization_id')->constrained('organizations')->onDelete('cascade'); // Ensure candidates belong to an organization
+            $table->rememberToken(); // This adds the remember_token column
+            $table->foreignId('organization_id')->constrained('organizations')->onDelete('cascade');
             $table->foreignId('candidate_group_id')->nullable()->constrained('candidate_groups')->onDelete('set null');
             $table->string('mobile', 20)->nullable();
             $table->string('national_id', 50)->nullable()->unique();
             $table->string('reference_id', 50)->nullable()->unique();
             $table->enum('special_needs', ['enable', 'disable'])->default('disable');
             $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->foreignId('created_by')->constrained('users')->onDelete('cascade'); // User who created the candidate
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

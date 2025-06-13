@@ -1,5 +1,4 @@
-@extends('layouts.app')
-
+@extends('layouts.candidate')
 @section('content')
 <div class="container">
     <h2>Exam Instructions</h2>
@@ -21,7 +20,7 @@
 
         <div class="mt-4">
             <a href="{{ route('candidates.exam.start', $exam->id) }}" class="btn btn-success btn-lg" id="startBtn" disabled>Start Exam</a>
-            <a href="{{ route('candidates.upcoming-exams.index') }}" class="btn btn-secondary btn-lg">Cancel</a>
+            <a href=" " class="btn btn-secondary btn-lg">Cancel</a>
         </div>
     </div>
 </div>

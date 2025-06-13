@@ -91,6 +91,19 @@
                                     @enderror
                                 </div>
 
+                                <!-- Candidate Password Confirmation Field -->
+                                <label for="password_confirmation">{{ __('Confirm Password') }}</label>
+                                <div class="input-group mb-3">
+                                    <input type="password" name="password_confirmation" id="password_confirmation"
+                                           class="form-control @error('password_confirmation') is-invalid @enderror"
+                                           placeholder="{{ __('Confirm Password') }}">
+                                    @error('password_confirmation')
+                                    <span class="error invalid-feedback">
+                                        {{ $message }}
+                                    </span>
+                                    @enderror
+                                </div>
+
                                 <!-- Candidate Group Field -->
                                 <label for="candidate_group">{{ __('Candidate Group') }}</label>
                                 <div class="input-group mb-3">

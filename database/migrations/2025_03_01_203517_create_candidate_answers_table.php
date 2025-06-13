@@ -12,13 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('candidate_answers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('exam_attempt_id')->constrained('exam_attempts')->onDelete('cascade');
-            $table->foreignId('question_id')->constrained('questions')->onDelete('cascade');
-            $table->text('answer')->nullable();
-            $table->boolean('is_correct')->default(false);
-            $table->integer('marks_awarded')->default(0);
-            $table->timestamps();
+           $table->id();
+$table->foreignId('user_id')->constrained()->onDelete('cascade');
+$table->foreignId('exam_id')->constrained()->onDelete('cascade');
+$table->foreignId('exam_attempt_id')->constrained('exam_attempts')->onDelete('cascade');
+$table->foreignId('question_id')->constrained('questions')->onDelete('cascade');
+$table->text('answer')->nullable();
+$table->boolean('is_correct')->default(false);
+$table->integer('marks_awarded')->default(0);
+$table->timestamps();
         });
     }
 

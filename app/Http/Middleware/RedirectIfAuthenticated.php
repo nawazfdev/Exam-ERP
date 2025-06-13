@@ -19,8 +19,21 @@ class RedirectIfAuthenticated
     {
         $guards = empty($guards) ? [null] : $guards;
 
-        foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
+  foreach (['candidate', 'web'] as $guard) {
+        if (Auth::guard($guard)->check()) {
+            if ($guard === 'candidate') {
+                if ($request->route()->getName() !== 'candidates.dashboard') {
+                    return redirect()->route('candidates.dashboard');
+                }
+            }
+                 $user = Auth::guard($guard)->user();
+                if ($user->hasRole('superadmin') || $user->hasRole('admin')) {
+                    return redirect()->route('admin.dashboard');
+                }
+                if ($user->hasRole('organization-admin')) {
+                    return redirect()->route('organization.dashboard');
+                }
+                
                 return redirect(RouteServiceProvider::HOME);
             }
         }

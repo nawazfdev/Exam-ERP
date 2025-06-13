@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('exam_attempts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('exam_id')->constrained('exams')->onDelete('cascade');
-            $table->foreignId('candidate_id')->constrained('candidates')->onDelete('cascade');
-            $table->integer('score')->default(0);
-            $table->integer('total_marks')->default(0);
-            $table->enum('status', ['pass', 'fail'])->nullable();
-            $table->timestamps();
-        });
+       Schema::create('exam_attempts', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('exam_id')->constrained('exams')->onDelete('cascade');
+    $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+    $table->integer('score')->default(0);
+    $table->integer('total_marks')->default(0);
+    $table->enum('status', ['pass', 'fail'])->nullable();
+    $table->timestamps();
+});
+
     }
 
     /**
